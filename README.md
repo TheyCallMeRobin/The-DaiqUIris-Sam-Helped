@@ -2,10 +2,11 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-I would only perform one command in the terminal window.
-### 'npm i'
-
 ## Available Scripts
+
+I would only perform one command in the terminal window:
+
+### `npm i`
 
 In the project directory, you can run:
 
