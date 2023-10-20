@@ -1,5 +1,36 @@
-:global {
-    .ant-layout-sider-trigger{
-        background-color: transparent;
-    }
+.ant-layout-sider, 
+.ant-layout-sider-menu, 
+.ant-layout-header, 
+.ant-layout-header-button {
+    background: green !important;
 }
+
+.ant-channelsdropdown,
+.ant-layout-sider, 
+.ant-layout-content,
+.ant-layout-footer {
+    text-align: center;
+}
+
+.ant-channelsdropdown {
+    width: 85%;
+}
+
+.ant-layout {
+    min-height: 100vh;
+}
+
+.ant-layout-header {
+    padding: 0;
+}
+
+.ant-layout-header-button {
+    font-size: 16px;
+    width: 64;
+    height: 64;
+}
+
+.ant-layout-content {
+    background: transparent;
+}
+

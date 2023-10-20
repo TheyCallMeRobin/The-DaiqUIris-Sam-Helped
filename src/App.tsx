@@ -1,10 +1,11 @@
-import './App.css'
+import './App.css';
 import React from 'react';
-import logo from './DaiqUIris-Logo.png';
+import logo from "./DaiqUIris-Logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Button, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
 import { useState } from 'react';
+import { ChannelsDropdown } from "./Components/ChannelsDropdown"
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -41,8 +42,12 @@ const UploadProps: React.FC = () => {
   };
 
   const uploadFunction = async (file: File) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log('File "${file.name}" uploaded successfully.');
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('File "${file.name}" uploaded successfully.');
+    } catch (err) {
+      console.error(err)
+    }
   };  
 
   return (
@@ -72,14 +77,12 @@ const App: React.FC = () => {
         },
       }}
     >
-      <Layout style={{ minHeight: '100vh' }}>
-      <Sider style={{backgroundColor: 'green'}} trigger={null} collapsible collapsed={collapsed}>
+      <Layout className="ant-layout">
+      <Sider className="ant-layout-sider" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
-        <Menu style={{backgroundColor: 'green'}}
+        <Menu className="ant-layout-sider-menu"
           theme="dark"
           mode="vertical"
-          
-          
           items={[
             {
               key: '1',
@@ -88,30 +91,21 @@ const App: React.FC = () => {
             },
           ]}
         />
+        <ChannelsDropdown />
       </Sider>
         <Layout>
-          <Header style={{ padding: 0, background: colorBgContainer}}>
-            {/*  */}
+          <Header className="ant-layout-header">
             <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: '16px',
-              width: 64,
-              height: 64,
-            }}
+            className="ant-layout-header-button"
           />
         </Header>
-        <Content
-          style={{
-            textAlign: 'center',
-            background: 'transparent',
-          }}
-        >
+        <Content className="ant-layout-content">
           <img src={logo} alt="The DaiqUIris"/>
         </Content>
-        <Footer style={{textAlign:'center'}}>
+        <Footer className="ant-layout-footer">
           The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew Rendall, & Cole Bailey
         </Footer>
       </Layout>
@@ -126,4 +120,3 @@ export default App;
 function styled(Panel: any) {
   throw new Error('Function not implemented.');
 }
-
