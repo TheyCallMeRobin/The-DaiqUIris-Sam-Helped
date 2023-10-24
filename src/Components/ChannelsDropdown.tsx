@@ -1,11 +1,13 @@
-import '../App.css';
-import React from "react"
 import { useEffect, useState } from "react"
 import { Api } from "../Config"
 import { Select } from "antd"
+import "./ChannelsDropdown.css"
 
+type props = {
+    onSelect: (value: string) => void
+}
 
-export const ChannelsDropdown = () => {
+export const ChannelsDropdown = (args: props) => {
     const [channels, setChannels] = useState<string[]>()
     
     const { Option } = Select;
@@ -29,16 +31,21 @@ export const ChannelsDropdown = () => {
         getChannels()
     }, [])
 
+    const selectOption = (item: string) => {
+        console.log(item)
+        args.onSelect(item)
+    }
 
     return (
         <Select 
-            className="components-channelsdropdown" 
+            className="drowdown" 
             showSearch placeholder="Channels" 
             filterOption={filterOption}
+            onSelect={(x) => selectOption(x)}
         > 
             {channels?.map((channel) => {
                 return (
-                    <Option value={channel} label={channel}>
+                    <Option value={channel} label={channel} key={channel}>
                         {channel}
                     </Option>
                 )

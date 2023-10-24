@@ -7,6 +7,8 @@ import { Col, Row, Button, Upload, Layout, Menu, ConfigProvider, theme } from 'a
 import { useState } from 'react';
 import { ChannelsDropdown } from "./Components/ChannelsDropdown"
 
+import { DataGraph } from "./Components/DataGraph"
+
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -62,9 +64,17 @@ function getItem(
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState<string | null>(null)
+
   const {
     token: {colorBgContainer},
   } = theme.useToken();
+
+  function renderGraph() {
+    if (selectedChannel != null) {
+      return (<DataGraph name={selectedChannel} />)
+    }
+  }
 
   return (
     <ConfigProvider
@@ -91,7 +101,8 @@ const App: React.FC = () => {
             },
           ]}
         />
-        <ChannelsDropdown />
+        <ChannelsDropdown onSelect={setSelectedChannel} />
+
       </Sider>
         <Layout>
           <Header className="app-layout-header">  
@@ -112,7 +123,7 @@ const App: React.FC = () => {
                               
         </Header>
         <Content>
-         
+         {renderGraph()}
         </Content>
         <Footer className="app-layout-footer">
           The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew Rendall, & Cole Bailey

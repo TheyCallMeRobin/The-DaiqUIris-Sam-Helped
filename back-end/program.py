@@ -1,5 +1,7 @@
 import numpy as np
 import mne
+
+
 from mtplotlib import pyplot as plt
 
 sample_data_folder = mne.datasets.sample.data_path()
@@ -13,3 +15,4 @@ raw.plot(duration=5, n_channels=30)
 
 plt.show()
     
+
