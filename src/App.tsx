@@ -3,7 +3,7 @@ import React from 'react';
 import logo from "./DaiqUIris-Logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
+import { Col, Row, Button, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
 import { useState } from 'react';
 import { ChannelsDropdown } from "./Components/ChannelsDropdown"
 
@@ -11,11 +11,11 @@ const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-interface UploadProps {
+ interface UploadProps {
   file: File;
   onSuccess: (response: any, file: File) => void;
   onError: (error: Error) => void;
-}
+} 
 
 function getItem(
   label: React.ReactNode,
@@ -31,7 +31,7 @@ function getItem(
   } as MenuItem;
 }
 
-const UploadProps: React.FC = () => {
+ const UploadProps: React.FC = () => {
   const customRequest = async ({ file, onSuccess, onError }: UploadProps) => {
     try {
       await uploadFunction(file);
@@ -58,7 +58,7 @@ const UploadProps: React.FC = () => {
         <Button type="text" block><UploadOutlined />Upload Files</Button>
       </Upload>
   );
-};
+}; 
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -77,10 +77,10 @@ const App: React.FC = () => {
         },
       }}
     >
-      <Layout className="ant-layout">
-      <Sider className="ant-layout-sider" trigger={null} collapsible collapsed={collapsed}>
+      <Layout className="app-layout">
+      <Sider className="app-layout-sider" trigger={null} collapsible collapsed={collapsed}>
         <div className="demo-logo-vertical" />
-        <Menu className="ant-layout-sider-menu"
+        <Menu className="app-layout-sider-menu"
           theme="dark"
           mode="vertical"
           items={[
@@ -94,18 +94,27 @@ const App: React.FC = () => {
         <ChannelsDropdown />
       </Sider>
         <Layout>
-          <Header className="ant-layout-header">
-            <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            className="ant-layout-header-button"
-          />
+          <Header className="app-layout-header">  
+            <Row justify="center" align="top">
+              <Col flex="50%">
+                <Button
+                  className="app-layout-header-button"
+                  type="text"
+                  icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                  onClick={() => setCollapsed(!collapsed)}                
+                  />  
+              </Col>
+              <Col flex="auto">
+                  <img className="app-layout-header-logo" src={logo} alt="The DaiqUIris"/>
+              </Col>
+            </Row>          
+                            
+                              
         </Header>
-        <Content className="ant-layout-content">
-          <img src={logo} alt="The DaiqUIris"/>
+        <Content>
+         
         </Content>
-        <Footer className="ant-layout-footer">
+        <Footer className="app-layout-footer">
           The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew Rendall, & Cole Bailey
         </Footer>
       </Layout>

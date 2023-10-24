@@ -32,7 +32,7 @@ export const ChannelsDropdown = () => {
 
     return (
         <Select 
-            className="ant-channelsdropdown" 
+            className="components-channelsdropdown" 
             showSearch placeholder="Channels" 
             filterOption={filterOption}
         > 

@@ -1,36 +1,45 @@
-.ant-layout-sider, 
-.ant-layout-sider-menu, 
-.ant-layout-header, 
-.ant-layout-header-button {
+.app-layout-sider, 
+.app-layout-sider-menu {
     background: green !important;
+} 
+.app-layout-header,
+.app-layout-header-button {
+    background: transparent;
 }
 
-.ant-channelsdropdown,
-.ant-layout-sider, 
-.ant-layout-content,
-.ant-layout-footer {
+.app-layout-sider, 
+.app-layout-content,
+.app-layout-footer {
     text-align: center;
 }
 
-.ant-channelsdropdown {
-    width: 85%;
-}
-
-.ant-layout {
+.app-layout {
     min-height: 100vh;
 }
 
-.ant-layout-header {
+.app-layout-header {
     padding: 0;
+    background: transparent;
+    
 }
 
-.ant-layout-header-button {
+.app-layout-header-button {
     font-size: 16px;
     width: 64;
     height: 64;
 }
 
-.ant-layout-content {
+.app-layout-header-logo {
+    width: 150px;
+    height: auto;    
+}
+
+.app-layout-content {
     background: transparent;
 }
+
+.components-channelsdropdown {
+    width: 85%;
+}
+
 
