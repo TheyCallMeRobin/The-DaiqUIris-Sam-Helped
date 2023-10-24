@@ -1,10 +1,12 @@
 import './App.css'
 import React from 'react';
-import logo from './DaiqUIris-Logo.png';
+import logo from "./DaiqUIris-Logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Button, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
 import { useState } from 'react';
+import { ChannelsDropdown } from "./Components/ChannelsDropdown"
+import { DataGraph } from "./Components/DataGraph"
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -41,8 +43,12 @@ const UploadProps: React.FC = () => {
   };
 
   const uploadFunction = async (file: File) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log('File "${file.name}" uploaded successfully.');
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log('File "${file.name}" uploaded successfully.');
+    } catch (err) {
+      console.error(err)
+    }
   };  
 
   return (
@@ -57,9 +63,17 @@ const UploadProps: React.FC = () => {
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState<string | null>(null)
+
   const {
     token: {colorBgContainer},
   } = theme.useToken();
+
+  function renderGraph() {
+    if (selectedChannel != null) {
+      return (<DataGraph name={selectedChannel} />)
+    }
+  }
 
   return (
     <ConfigProvider
@@ -78,8 +92,6 @@ const App: React.FC = () => {
         <Menu style={{backgroundColor: 'green'}}
           theme="dark"
           mode="vertical"
-          
-          
           items={[
             {
               key: '1',
@@ -88,6 +100,7 @@ const App: React.FC = () => {
             },
           ]}
         />
+        <ChannelsDropdown onSelect={setSelectedChannel} />
       </Sider>
         <Layout>
           <Header style={{ padding: 0, background: colorBgContainer}}>
@@ -109,7 +122,8 @@ const App: React.FC = () => {
             background: 'transparent',
           }}
         >
-          <img src={logo} alt="The DaiqUIris"/>
+          {/* <img src={logo} alt="The DaiqUIris"/> */}
+         {renderGraph()}
         </Content>
         <Footer style={{textAlign:'center'}}>
           The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew Rendall, & Cole Bailey
