@@ -1,5 +1,5 @@
 import './App.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import logo from "./DaiqUIris-Logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { ChannelsDropdown } from "./Components/ChannelsDropdown"
 
 import { DataGraph } from "./Components/DataGraph"
+import { UploadFileButton } from './Components/UploadFile';
+import { DatasourceDropdown } from './Components/DatasourceDropdown';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -33,38 +35,16 @@ function getItem(
   } as MenuItem;
 }
 
- const UploadProps: React.FC = () => {
-  const customRequest = async ({ file, onSuccess, onError }: UploadProps) => {
-    try {
-      await uploadFunction(file);
-      onSuccess({}, file);
-    } catch (error) {
-      onError(new Error('Upload failed'));
-    }
-  };
-
-  const uploadFunction = async (file: File) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log('File "${file.name}" uploaded successfully.');
-    } catch (err) {
-      console.error(err)
-    }
-  };  
-
-  return (
-    <Upload
-      customRequest={customRequest as any}
-      showUploadList={false}
-      >
-        <Button type="text" block><UploadOutlined />Upload Files</Button>
-      </Upload>
-  );
-}; 
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null)
+  const [dataSources, setSelecedDataSources] = useState([])
+  const [rerender, setRerender] = useState(false);
+
+  const onUpload = () => {
+    setRerender(!rerender)
+  }
 
   const {
     token: {colorBgContainer},
@@ -96,12 +76,20 @@ const App: React.FC = () => {
           items={[
             {
               key: '1',
-              icon: <UploadProps />,
+              icon: <UploadFileButton onUpload={onUpload}/>,
               
             },
+            {
+              key: "2",
+              icon: <DatasourceDropdown rerender={rerender}/>
+
+            },
+            {
+              key: "3",
+              icon: <ChannelsDropdown onSelect={setSelectedChannel} />
+            }
           ]}
         />
-        <ChannelsDropdown onSelect={setSelectedChannel} />
 
       </Sider>
         <Layout>
