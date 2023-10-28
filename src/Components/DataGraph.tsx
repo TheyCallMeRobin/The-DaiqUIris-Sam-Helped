@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Api } from "../Config"
 import Plot from 'react-plotly.js';
+import "./Components.css"
 
 type props = {
     name: string
@@ -23,7 +24,7 @@ export const DataGraph = (args: props) => {
         return (
 
             <>
-                <Plot 
+                <Plot className="component-data-graph"
                     data={[
                         {
                             x: data.times,

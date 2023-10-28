@@ -3,11 +3,11 @@ import React from 'react';
 import logo from "./DaiqUIris-Logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Col, Row, Button, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
+import { Col, Row, Button, Divider, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
 import { useState } from 'react';
 import { ChannelsDropdown } from "./Components/ChannelsDropdown"
-
 import { DataGraph } from "./Components/DataGraph"
+
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -119,7 +119,7 @@ const App: React.FC = () => {
                   <img className="app-layout-header-logo" src={logo} alt="The DaiqUIris"/>
               </Col>
             </Row>          
-                            
+                     <Divider> </Divider>       
                               
         </Header>
         <Content>

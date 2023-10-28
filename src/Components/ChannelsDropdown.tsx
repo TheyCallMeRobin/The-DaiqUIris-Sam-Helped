@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Api } from "../Config"
 import { Select } from "antd"
-import "./ChannelsDropdown.css"
+import "./Components.css"
 
 type props = {
     onSelect: (value: string) => void
@@ -38,7 +38,7 @@ export const ChannelsDropdown = (args: props) => {
 
     return (
         <Select 
-            className="drowdown" 
+            className="component-channels-dropdown" 
             showSearch placeholder="Channels" 
             filterOption={filterOption}
             onSelect={(x) => selectOption(x)}
