@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, Response
 import numpy as np
 import mne
 import json
+import os
 from flask_cors import CORS
 
 def init_data():
@@ -23,6 +24,19 @@ CORS(app)
 def get_channels():
     return raw.ch_names
 
+@app.route("/api/channels/file/<name>", methods=["GET"])
+def get_channels_from_file(name):
+    channels = []
+    if (name == "Sample Data"):
+        channels = raw.ch_names
+        
+    files = os.listdir("files")
+    for file in files:
+        if (file.startwith(name)):
+            
+            channels = get_channels_from_file(file)
+            
+            return jsonify(channels)
 
 @app.route("/api/channels/<name>")
 def get_channel(name):
@@ -36,6 +50,31 @@ def get_channel(name):
 
     return jsonify(exported_data)
 
+@app.route("/api/upload", methods=["POST"])
+def upload_file():
+    uploaded_file = request.files['file']
+    uploaded_file.save("files/" + uploaded_file.filename)
+    
+    return Response("Uploaded File", status=200)
+
+@app.route("/api/files", methods=["GET"])
+def get_file_names():
+    
+    files = os.listdir("files")
+    files.insert(0, "Sample Data")
+    return jsonify(files)
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+def get_channels_from_file(file_name: str) -> list[str]:
+    ext = file_name.split(".")[1]
+    data = None
+    channels = []
+    match ext:
+        case "fif":
+            data = mne.io.read_raw_fif(file_name)
+            channels = data.crop(0, 30).load_data().ch_names
+            
+    return channels
