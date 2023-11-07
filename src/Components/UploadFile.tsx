@@ -22,6 +22,7 @@ export const UploadFileButton = (props: props) => {
    
       return (
         <Upload
+          className="component-upload-files"
           action="http://localhost:5000/api/upload"
           onChange={(file) => onUpload(file)}
           >

@@ -3,7 +3,7 @@ import numpy as np
 import mne
 import json
 import os
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 def init_data():
     sample_data_folder = mne.datasets.sample.data_path()
@@ -17,14 +17,16 @@ raw = init_data()
 raw = raw.crop(0, 30).load_data()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 @app.route("/api/channels", methods=['GET'])
+@cross_origin()
 def get_channels():
     return raw.ch_names
 
 @app.route("/api/channels/file/<name>", methods=["GET"])
+@cross_origin()
 def get_channels_from_file(name):
     channels = []
     if (name == "Sample Data"):
@@ -39,6 +41,7 @@ def get_channels_from_file(name):
             return jsonify(channels)
 
 @app.route("/api/channels/<name>")
+@cross_origin()
 def get_channel(name):
 
     data, times = raw.get_data(picks=[name], return_times=True)
@@ -51,6 +54,7 @@ def get_channel(name):
     return jsonify(exported_data)
 
 @app.route("/api/upload", methods=["POST"])
+@cross_origin()
 def upload_file():
     uploaded_file = request.files['file']
     uploaded_file.save("files/" + uploaded_file.filename)
@@ -58,6 +62,7 @@ def upload_file():
     return Response("Uploaded File", status=200)
 
 @app.route("/api/files", methods=["GET"])
+@cross_origin()
 def get_file_names():
     
     files = os.listdir("files")

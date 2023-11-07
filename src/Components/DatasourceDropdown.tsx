@@ -38,7 +38,7 @@ export const DatasourceDropdown = (props: props) => {
 
     return (
         <Select 
-            className="drowdown" 
+            className="component-data-source" 
             showSearch placeholder="Data Source" 
             onChange={(value) => onSelect(value)}
         > 

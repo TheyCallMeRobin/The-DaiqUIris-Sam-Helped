@@ -1,6 +1,6 @@
 .app-layout-sider, 
 .app-layout-sider-menu {
-    background: green !important;
+    background: #008000 !important;
 } 
 .app-layout-header,
 .app-layout-header-button {
@@ -38,8 +38,8 @@
     background: transparent;
 }
 
-.components-channelsdropdown {
+/* .components-channelsdropdown {
     width: 85%;
-}
+} */
 
 
