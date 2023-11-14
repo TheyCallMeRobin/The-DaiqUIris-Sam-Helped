@@ -22,7 +22,6 @@ export const DataGraph = (props: props) => {
 
 	useEffect(() => {
 		const getChartData = async () => {
-            console.log("Getting data")
 			try {
 				const { data } = await Api.get(`/api/channels/${props.name}`);
 				setData(data);

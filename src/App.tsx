@@ -57,15 +57,14 @@ const App: React.FC = () => {
   }
 
   function renderGraph() {
-    console.log(123213)
+
     if (selectedChannel != null) {
-      console.log("RENDER")
+     
       return (<DataGraph name={selectedChannel} setErrors={setErrors}/>)
     }
   }
 
   useEffect(() => {
-    console.log(hasErrors)
   }, [selectedChannel, hasErrors])
 
   function selectChannel(channel: string | null) {
