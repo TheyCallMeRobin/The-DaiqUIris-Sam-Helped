@@ -1,4 +1,4 @@
-.component-data-graph,
+
 .component-data-source,
 .component-upload-files,
 .component-channels-dropdown {
@@ -9,4 +9,13 @@
     text-align: center;
     width: 90%;
     
+}
+.component-data-graph {
+    background: transparent !important;
+        background-color: transparent;
+        padding-top: 5%;
+        padding-left: 10%;
+        text-align: center;
+        width: 90%;
+        height: 80%;
 }

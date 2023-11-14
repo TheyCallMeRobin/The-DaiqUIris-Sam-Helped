@@ -3,12 +3,13 @@ import React, { useEffect } from 'react';
 import logo from "./DaiqUIris-Logo.png";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Col, Row, Button, Divider, Upload, Layout, Menu, ConfigProvider, theme } from 'antd';
+import { Col, Row, Button, Divider, Upload, Layout, Menu, ConfigProvider, theme, Result } from 'antd';
 import { useState } from 'react';
 import { ChannelsDropdown } from "./Components/ChannelsDropdown"
 import { DataGraph } from "./Components/DataGraph"
 import { UploadFileButton } from './Components/UploadFile';
 import { DatasourceDropdown } from './Components/DatasourceDropdown';
+import { ErrorDisplay } from './Components/ErrorDisplay';
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -39,8 +40,9 @@ function getItem(
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null)
-  const [dataSources, setSelecedDataSources] = useState([])
+  const [selectedDataSource, setSelectedDataSource] = useState("")
   const [rerender, setRerender] = useState(false);
+  const [hasErrors, setHasErrors] = useState(false);
 
   const onUpload = () => {
     setRerender(!rerender)
@@ -50,11 +52,32 @@ const App: React.FC = () => {
     token: {colorBgContainer},
   } = theme.useToken();
 
+  function setErrors(errors: boolean) {
+    setHasErrors(errors)
+  }
+
   function renderGraph() {
+    console.log(123213)
     if (selectedChannel != null) {
-      return (<DataGraph name={selectedChannel} />)
+      console.log("RENDER")
+      return (<DataGraph name={selectedChannel} setErrors={setErrors}/>)
     }
   }
+
+  useEffect(() => {
+    console.log(hasErrors)
+  }, [selectedChannel, hasErrors])
+
+  function selectChannel(channel: string | null) {
+
+    setSelectedChannel(channel)
+  }
+
+  function selectDataSource(dataSource: string) {
+    setSelectedDataSource(dataSource);
+    setSelectedChannel(null)
+  }
+
 
   return (
     <ConfigProvider
@@ -81,12 +104,12 @@ const App: React.FC = () => {
             },
             {
               key: "2",
-              icon: <DatasourceDropdown rerender={rerender}/>
+              icon: <DatasourceDropdown rerender={rerender} onSelect={selectDataSource} setErrors={setErrors}/>
 
             },
             {
               key: "3",
-              icon: <ChannelsDropdown onSelect={setSelectedChannel} />
+              icon: <ChannelsDropdown onSelect={selectChannel} dataSource={selectedDataSource} setErrors={setErrors}/>
             }
           ]}
         />
@@ -111,7 +134,11 @@ const App: React.FC = () => {
                               
         </Header>
         <Content>
-         {renderGraph()}
+
+          {hasErrors && 
+            <ErrorDisplay />
+          }
+          {!hasErrors && <>{renderGraph()}</>}
         </Content>
         <Footer className="app-layout-footer">
           The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew Rendall, & Cole Bailey

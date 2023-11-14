@@ -1,56 +1,65 @@
-import { useEffect, useState } from "react"
-import { Api } from "../Config"
-import { Select } from "antd"
-import "./Components.css"
+import { useEffect, useState } from "react";
+import { Api } from "../Config";
+import { Select } from "antd";
+import "./Components.css";
 
 type props = {
-    onSelect: (value: string) => void
-}
+	onSelect: (value: string) => void;
+	setErrors?: (hasErrors: boolean) => void;
 
-export const ChannelsDropdown = (args: props) => {
-    const [channels, setChannels] = useState<string[]>()
-    
-    const { Option } = Select;
+	dataSource: string;
+};
 
-    const filterOption = (input: string, option?: 
-        {   label: string; 
-            value: string 
-        }) =>
-    (option?.label ?? '').toLowerCase().startsWith(input.toLowerCase());
+export const ChannelsDropdown = (props: props) => {
+	const [channels, setChannels] = useState<string[]>();
 
-    useEffect(() => {
+	const { Option } = Select;
 
-        const getChannels = async () => {
-            try {
-                const { data } = await Api.get("/api/channels")
-                setChannels(data)
-            } catch (error) {
-                console.error(error)
-            }
-        }
-        getChannels()
-    }, [])
+	const filterOption = (
+		input: string,
+		option?: { label: string; value: string }
+	) => (option?.label ?? "").toLowerCase().startsWith(input.toLowerCase());
 
-    const selectOption = (item: string) => {
-        console.log(item)
-        args.onSelect(item)
-    }
+	function setErrors(errors: boolean): void {
+		if (props.setErrors) {
+			props.setErrors(errors);
+		}
+	}
 
-    return (
-        <Select 
-            className="component-channels-dropdown" 
-            showSearch placeholder="Channels" 
-            filterOption={filterOption}
-            onSelect={(x) => selectOption(x)}
-        > 
-            {channels?.map((channel) => {
-                return (
-                    <Option value={channel} label={channel} key={channel}>
-                        {channel}
-                    </Option>
-                )
-            })}
-        </Select>
-    )
+	useEffect(() => {
+		const getChannels = async () => {
+			try {
+				const { data } = await Api.get(
+					`/api/channels/file/${props.dataSource}`
+				);
+				setChannels(data);
+                setErrors(false)
+			} catch (error) {
+				setErrors(true)
+			}
+		};
+		getChannels();
+	}, [props.dataSource]);
 
-}
+	const selectOption = (item: string) => {
+		props.onSelect(item);
+	};
+
+	return (
+		<Select
+			className="component-channels-dropdown"
+			showSearch
+			placeholder="Channels"
+			filterOption={filterOption}
+			onSelect={(x) => selectOption(x)}
+		>
+			{channels?.map((channel) => {
+				return (
+					<Option value={channel} label={channel} key={channel}>
+						{channel}
+					</Option>
+				);
+			})}
+		</Select>
+	);
+};

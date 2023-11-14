@@ -1,54 +1,72 @@
-import { Select } from "antd"
+import { Select } from "antd";
 import { useState, useEffect } from "react";
 import { Api } from "../Config";
 
 type props = {
-    rerender: boolean;
-    selectChannels?: (channels: string[]) => void;
-}
+	rerender: boolean;
+	onSelect?: (dataSource: string) => void;
+	setErrors?: (hasErrors: boolean) => void;
+};
 
 export const DatasourceDropdown = (props: props) => {
-    const { Option } = Select;
-    const [dataSources, setDataSources] = useState([""])
+	const { Option } = Select;
+	const [dataSources, setDataSources] = useState([""]);
 
-    useEffect(() => {
+	useEffect(() => {
+		const getDataSources = async () => {
+			try {
+				const { data } = await Api.get("/api/files");
+				setDataSources(data);
+				setErrors(false);
+			} catch (error) {
+				setErrors(true);
+			}
+		};
+		getDataSources();
+	}, [props.rerender]);
 
-        const getDataSources = async () => {
-            const { data } = await Api.get("/api/files")
-            setDataSources(data)
+	const getChannels = async (value: string) => {
+		try {
+			const { data } = await Api.get(`/api/channels/file/${value}`);
+			setErrors(false);
+			return data;
+		} catch (error) {
+			setErrors(true);
+		}
+	};
 
-        }
-        getDataSources()
-        
-    }, [props.rerender])
+	function setErrors(errors: boolean): void {
+		if (props.setErrors) {
+			props.setErrors(errors);
+		}
+	}
 
-    const getChannels = async (value: any) => {
-        const { data } = await Api.get(`/api/channels/file/${value}`)
-        
-        return data;
-    }
+	const onSelect = (value: string) => {
+		getChannels(value).then(() => {
+			if (props.onSelect) {
+				props.onSelect(value);
+			}
+		});
+	};
 
-    const onSelect = (value: any) => {
-        getChannels(value).then((data) => {
-            if (props.selectChannels) {
-                props.selectChannels(data)
-            }
-        })
-    }
-
-    return (
-        <Select 
-            className="component-data-source" 
-            showSearch placeholder="Data Source" 
-            onChange={(value) => onSelect(value)}
-        > 
-            {dataSources?.map((dataSource) => {
-                return (
-                    <Option value={dataSource} label={dataSource} key={dataSource}>
-                        {dataSource}
-                    </Option>
-                )
-            })}
-        </Select>
-    )
-}
+	return (
+		<Select
+			className="component-data-source"
+			showSearch
+			placeholder="Data Source"
+			onChange={(value) => onSelect(value)}
+		>
+			{dataSources?.map((dataSource) => {
+				return (
+					<Option
+						value={dataSource}
+						label={dataSource}
+						key={dataSource}
+					>
+						{dataSource}
+					</Option>
+				);
+			})}
+		</Select>
+	);
+};
