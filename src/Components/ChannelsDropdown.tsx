@@ -6,7 +6,6 @@ import "./Components.css";
 type props = {
 	onSelect: (value: string) => void;
 	setErrors?: (hasErrors: boolean) => void;
-
 	dataSource: string;
 };
 
@@ -25,20 +24,22 @@ export const ChannelsDropdown = (props: props) => {
 			props.setErrors(errors);
 		}
 	}
+	async function getChannels() {
+		try {
+			const { data } = await Api.get(
+				`/api/channels/file/${props.dataSource}`
+			);
+			setChannels(data);
+			setErrors(false);
+		} catch (error) {
+			setErrors(true);
+		}
+	}
 
 	useEffect(() => {
-		const getChannels = async () => {
-			try {
-				const { data } = await Api.get(
-					`/api/channels/file/${props.dataSource}`
-				);
-				setChannels(data);
-                setErrors(false)
-			} catch (error) {
-				setErrors(true)
-			}
-		};
-		getChannels();
+		if (props.dataSource.length > 0) {
+			getChannels();
+		}
 	}, [props.dataSource]);
 
 	const selectOption = (item: string) => {
