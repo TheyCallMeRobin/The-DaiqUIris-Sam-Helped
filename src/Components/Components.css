@@ -1,21 +1,25 @@
-
 .component-data-source,
 .component-upload-files,
 .component-channels-dropdown {
-    background: transparent !important;
-    background-color: transparent;
-    padding-top: 5%;
-    padding-left: 10%;
-    text-align: center;
-    width: 90%;
-    
+	background: transparent !important;
+	background-color: transparent;
+	padding-top: 5%;
+	padding-left: 10%;
+	text-align: center;
+	width: 90%;
 }
 .component-data-graph {
-    background: transparent !important;
-        background-color: transparent;
-        padding-top: 5%;
-        padding-left: 10%;
-        text-align: center;
-        width: 90%;
-        height: 80%;
+	background: transparent !important;
+	background-color: transparent;
+	padding-top: 1rem;
+	padding-left: 5%;
+	text-align: center;
+	width: 90%;
+	height: 80%;
+}
+
+/* This needs to be here to override the ant style */
+.ant-select-selection-placeholder {
+	font-weight: 450 !important;
+	color: #000 !important;
 }

@@ -53,6 +53,7 @@ export const ChannelsDropdown = (props: props) => {
 			placeholder="Channels"
 			filterOption={filterOption}
 			onSelect={(x) => selectOption(x)}
+            bordered={false}
 		>
 			{channels?.map((channel) => {
 				return (

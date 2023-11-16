@@ -23,7 +23,7 @@ import {
 } from "antd";
 import { useState } from "react";
 import { ChannelsDropdown } from "./Components/ChannelsDropdown";
-import { DataGraph } from "./Components/DataGraph";
+import { DataGraph } from "./Components/DataGraph/DataGraph";
 import { UploadFileButton } from "./Components/UploadFile";
 import { DatasourceDropdown } from "./Components/DatasourceDropdown";
 import { ErrorDisplay } from "./Components/ErrorDisplay";
@@ -73,11 +73,7 @@ const App: React.FC = () => {
 
 	function renderGraph() {
 		if (selectedChannel != null) {
-			return (
-				<div className="graph-wrapper">
-					<DataGraph name={selectedChannel} setErrors={setErrors} />
-				</div>
-			);
+			return <DataGraph name={selectedChannel} setErrors={setErrors} />;
 		}
 	}
 
