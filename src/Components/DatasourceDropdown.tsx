@@ -55,7 +55,10 @@ export const DatasourceDropdown = (props: props) => {
 			showSearch
 			placeholder="Data Source"
 			onChange={(value) => onSelect(value)}
+			bordered={false}
+			
 		>
+			
 			{dataSources?.map((dataSource) => {
 				return (
 					<Option
