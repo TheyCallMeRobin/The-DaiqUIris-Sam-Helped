@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from flask import Flask, jsonify, request, Response
 import numpy as np
 import mne
@@ -19,6 +20,20 @@ raw = raw.crop(0, 30).load_data()
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+def get_channels_from_file(file_name: str) -> list[str]:
+
+    ext = file_name.split(".")[1]
+    data = None
+    channels = []
+    file_name = f"files/{file_name}"
+    match ext:
+        case "fif":
+            data = mne.io.read_raw_fif(file_name)
+        case "edf":
+            data = mne.io.read_raw_edf(file_name)
+    channels = data.crop(0, 30).load_data().ch_names
+    return channels
+
 
 @app.route("/api/channels", methods=['GET'])
 @cross_origin()
@@ -27,18 +42,17 @@ def get_channels():
 
 @app.route("/api/channels/file/<name>", methods=["GET"])
 @cross_origin()
-def get_channels_from_file(name):
+def get_channels_from_file_endpoint(name):
     channels = []
     if (name == "Sample Data"):
         channels = raw.ch_names
-        
-    files = os.listdir("files")
-    for file in files:
-        if (file.startwith(name)):
-            
-            channels = get_channels_from_file(file)
-            
-            return jsonify(channels)
+    else:
+        files = os.listdir("files")
+        for file in files:
+            if (file.startswith(name)):
+
+                channels = get_channels_from_file(file)
+    return jsonify(channels)
 
 @app.route("/api/channels/<name>")
 @cross_origin()
@@ -56,30 +70,23 @@ def get_channel(name):
 @app.route("/api/upload", methods=["POST"])
 @cross_origin()
 def upload_file():
-    uploaded_file = request.files['file']
-    uploaded_file.save("files/" + uploaded_file.filename)
+    try:
+        uploaded_file = request.files['file']
+        uploaded_file.save("files/" + uploaded_file.filename)
     
-    return Response("Uploaded File", status=200)
-
+        return Response("Uploaded File", status=201)
+    except:
+        return Response("Unable to upload file", sstatus=400)
 @app.route("/api/files", methods=["GET"])
 @cross_origin()
 def get_file_names():
     
     files = os.listdir("files")
     files.insert(0, "Sample Data")
+
     return jsonify(files)
 
 if __name__ == "__main__":
     app.run(debug=True)
 
 
-def get_channels_from_file(file_name: str) -> list[str]:
-    ext = file_name.split(".")[1]
-    data = None
-    channels = []
-    match ext:
-        case "fif":
-            data = mne.io.read_raw_fif(file_name)
-            channels = data.crop(0, 30).load_data().ch_names
-            
-    return channels
