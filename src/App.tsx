@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useId } from "react";
 import logo from "./DaiqUIris-Logo.png";
 import {
 	MenuFoldOutlined,
@@ -8,7 +8,7 @@ import {
 	UserOutlined,
 	VideoCameraOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
+import type { MenuProps, TabsProps } from "antd";
 import {
 	Col,
 	Row,
@@ -20,6 +20,7 @@ import {
 	ConfigProvider,
 	theme,
 	Result,
+	Tabs,
 } from "antd";
 import { useState } from "react";
 import { ChannelsDropdown } from "./Components/ChannelsDropdown";
@@ -27,6 +28,8 @@ import { DataGraph } from "./Components/DataGraph/DataGraph";
 import { UploadFileButton } from "./Components/UploadFile";
 import { DatasourceDropdown } from "./Components/DatasourceDropdown";
 import { ErrorDisplay } from "./Components/ErrorDisplay";
+import { PSDIframe } from "./Components/PSDIframe";
+import { RawSensorTracesIframe } from "./Components/RawSensorTracesIframe";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -58,7 +61,9 @@ const App: React.FC = () => {
 	const [selectedDataSource, setSelectedDataSource] = useState("");
 	const [rerender, setRerender] = useState(false);
 	const [hasErrors, setHasErrors] = useState(false);
-
+	const [tabKey, setTabKey] = useState("1");
+	const id = useId();
+	const otherId = useId();
 	const onUpload = () => {
 		setRerender(!rerender);
 	};
@@ -70,14 +75,17 @@ const App: React.FC = () => {
 	function setErrors(errors: boolean) {
 		setHasErrors(errors);
 	}
-
 	function renderGraph() {
 		if (selectedChannel != null) {
 			return <DataGraph name={selectedChannel} setErrors={setErrors} />;
 		}
 	}
+	function onChange(key: string) {
+		setTabKey(key);
+	}
+	useEffect(() => {
 
-	useEffect(() => {}, [selectedChannel, hasErrors]);
+	}, [selectedChannel, hasErrors]);
 
 	function selectChannel(channel: string | null) {
 		setSelectedChannel(channel);
@@ -88,12 +96,31 @@ const App: React.FC = () => {
 		setSelectedChannel(null);
 	}
 
+	const items: TabsProps["items"] = [
+		{
+			key: "1",
+			label: "Power Spectral Density",
+		},
+		{
+			key: "2",
+			label: "Raw Sensor Traces"
+		}
+	];
+
+	function renderTabs() {
+		switch (tabKey) {
+			case "1": return <PSDIframe />;
+			case "2": return <RawSensorTracesIframe />;
+		}
+	}
+
 	return (
 		<ConfigProvider
 			theme={{
 				token: {
 					// Seed Token
 					colorPrimary: "white",
+					colorText: "black",
 					colorBgTextHover: "transparent",
 				},
 			}}
@@ -168,6 +195,19 @@ const App: React.FC = () => {
 					<Content>
 						{hasErrors && <ErrorDisplay />}
 						{!hasErrors && <>{renderGraph()}</>}
+						{selectedDataSource === "Sample Data" && selectedChannel === null && (
+							<>
+								<Tabs
+									items={items}
+									defaultActiveKey="1"
+									onChange={onChange}
+									style={{
+										color: "black",
+									}}
+								/>
+								{renderTabs()}
+							</>
+						)}
 					</Content>
 					<Footer className="app-layout-footer">
 						The DaiqUIris ©2023 Created by: Robin White, Zachary

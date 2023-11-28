@@ -38,6 +38,19 @@
     background: transparent;
 }
 
+.iframe-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    align-self: center;
+}
+.ant-tabs-tab-btn {
+    color: black;
+}
+.ant-tabs-tab ant-tabs-tab-active {
+    color: turquoise !important;
+}
 /* .components-channelsdropdown {
     width: 85%;
 } */

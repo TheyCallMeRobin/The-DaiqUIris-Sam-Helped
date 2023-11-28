@@ -54,6 +54,7 @@ export const ChannelsDropdown = (props: props) => {
 			filterOption={filterOption}
 			onSelect={(x) => selectOption(x)}
             bordered={false}
+			showAction={["click"]}
 		>
 			{channels?.map((channel) => {
 				return (
