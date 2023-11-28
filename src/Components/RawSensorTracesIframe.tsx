@@ -1,7 +1,8 @@
+import "./Components.css";
 
 export const RawSensorTracesIframe = () => {
-    return (
-		<div style={{height: "100%", width: "100%"}}>
+	return (
+		<div className="component-rawsensortracesl-frame">
 			<iframe
 				src="http://localhost:5000/api/raw-sensor"
 				height="100%"
@@ -9,8 +10,8 @@ export const RawSensorTracesIframe = () => {
 				style={{
 					border: "none",
 				}}
-                loading="eager"
+				loading="eager"
 			></iframe>
 		</div>
-    )
-}
+	);
+};

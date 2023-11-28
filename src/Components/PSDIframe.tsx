@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Api } from "../Config";
 import { Spin } from "antd";
+import "./Components.css";
 
 export const PSDIframe = () => {
 	const [html, setHtml] = useState("");
@@ -19,7 +20,7 @@ export const PSDIframe = () => {
 		<>
 			{loading && <>Loading... </>}
 
-			<div style={{ height: "100%", width: "100%" }}>
+			<div className="component-psdi-frame">
 				<iframe
 					srcDoc={html.replaceAll("Loading...", "")}
 					height="100%"

@@ -83,9 +83,7 @@ const App: React.FC = () => {
 	function onChange(key: string) {
 		setTabKey(key);
 	}
-	useEffect(() => {
-
-	}, [selectedChannel, hasErrors]);
+	useEffect(() => {}, [selectedChannel, hasErrors]);
 
 	function selectChannel(channel: string | null) {
 		setSelectedChannel(channel);
@@ -103,14 +101,16 @@ const App: React.FC = () => {
 		},
 		{
 			key: "2",
-			label: "Raw Sensor Traces"
-		}
+			label: "Raw Sensor Traces",
+		},
 	];
 
 	function renderTabs() {
 		switch (tabKey) {
-			case "1": return <PSDIframe />;
-			case "2": return <RawSensorTracesIframe />;
+			case "1":
+				return <PSDIframe />;
+			case "2":
+				return <RawSensorTracesIframe />;
 		}
 	}
 
@@ -119,7 +119,7 @@ const App: React.FC = () => {
 			theme={{
 				token: {
 					// Seed Token
-					colorPrimary: "white",
+					colorPrimary: "green",
 					colorText: "black",
 					colorBgTextHover: "transparent",
 				},
@@ -173,11 +173,7 @@ const App: React.FC = () => {
 									className="app-layout-header-button"
 									type="text"
 									icon={
-										collapsed ? (
-											<MenuUnfoldOutlined />
-										) : (
-											<MenuFoldOutlined />
-										)
+										collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
 									}
 									onClick={() => setCollapsed(!collapsed)}
 								/>
@@ -195,23 +191,24 @@ const App: React.FC = () => {
 					<Content>
 						{hasErrors && <ErrorDisplay />}
 						{!hasErrors && <>{renderGraph()}</>}
-						{selectedDataSource === "Sample Data" && selectedChannel === null && (
-							<>
-								<Tabs
-									items={items}
-									defaultActiveKey="1"
-									onChange={onChange}
-									style={{
-										color: "black",
-									}}
-								/>
-								{renderTabs()}
-							</>
-						)}
+						{selectedDataSource === "Sample Data" &&
+							selectedChannel === null && (
+								<>
+									<Tabs
+										items={items}
+										defaultActiveKey="1"
+										onChange={onChange}
+										style={{
+											color: "black",
+										}}
+									/>
+									{renderTabs()}
+								</>
+							)}
 					</Content>
 					<Footer className="app-layout-footer">
-						The DaiqUIris ©2023 Created by: Robin White, Zachary
-						Duncan, Matthew Rendall, & Cole Bailey
+						The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew
+						Rendall, & Cole Bailey
 					</Footer>
 				</Layout>
 			</Layout>

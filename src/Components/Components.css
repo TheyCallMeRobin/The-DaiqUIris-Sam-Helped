@@ -18,6 +18,17 @@
 	height: 80%;
 }
 
+.component-psdi-frame,
+.component-rawsensortracesl-frame {
+	background: transparent !important;
+	background-color: transparent;
+	padding-top: 1rem;
+	padding-left: 5%;
+	text-align: center;
+	width: 100vw;
+	height: 45vw;
+}
+
 /* This needs to be here to override the ant style */
 .ant-select-selection-placeholder {
 	font-weight: 450 !important;
