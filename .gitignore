@@ -4,6 +4,9 @@
 .idea
 .vscode
 
+test.py
+program.py
+
 # dependencies
 /node_modules
 /.pnp
