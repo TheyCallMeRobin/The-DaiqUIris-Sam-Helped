@@ -9,3 +9,7 @@ export type ChannelData = {
     Q3: number;
     max: number;
 }
+
+export type LoadingProps = {
+    setLoading: (loading: boolean) => void;
+}
