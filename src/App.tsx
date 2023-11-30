@@ -194,7 +194,7 @@ const App: React.FC = () => {
 		{
 			key: "3",
 			icon: (
-				<Button type="primary" onClick={brain}>
+				<Button type="text" onClick={brain}>
 					Show Brain!
 				</Button>
 			),

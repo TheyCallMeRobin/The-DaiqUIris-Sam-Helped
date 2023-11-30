@@ -15,10 +15,6 @@ const GraphOptions: GraphOption[] = [
         label: "Contour"
     },
     {
-        value: "scattercarpet",
-        label: "Scatter Carpet"
-    },
-    {
         value: "bar",
         label: "Bar"
     }
