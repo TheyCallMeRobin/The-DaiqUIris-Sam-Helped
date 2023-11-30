@@ -40,7 +40,7 @@ export const ChannelsDropdown = (props: props) => {
 		if (props.dataSource.length > 0) {
 			getChannels();
 		}
-	}, [props.dataSource]);
+	}, []);
 
 	const selectOption = (item: string) => {
 		props.onSelect(item);
@@ -53,9 +53,12 @@ export const ChannelsDropdown = (props: props) => {
 			placeholder="Channels"
 			filterOption={filterOption}
 			onSelect={(x) => selectOption(x)}
-            bordered={false}
+			bordered={false}
 			showAction={["click"]}
 		>
+			<Option value="MULTI" label="Multi-Plot" key="None">
+				Multi-Plot
+			</Option>
 			{channels?.map((channel) => {
 				return (
 					<Option value={channel} label={channel} key={channel}>

@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useEffect, useId } from "react";
+import React, { createContext, useEffect, useId } from "react";
 import logo from "./DaiqUIris-Logo.png";
 import {
 	MenuFoldOutlined,
@@ -21,6 +21,7 @@ import {
 	theme,
 	Result,
 	Tabs,
+	Spin,
 } from "antd";
 import { useState } from "react";
 import { ChannelsDropdown } from "./Components/ChannelsDropdown";
@@ -30,6 +31,8 @@ import { DatasourceDropdown } from "./Components/DatasourceDropdown";
 import { ErrorDisplay } from "./Components/ErrorDisplay";
 import { PSDIframe } from "./Components/PSDIframe";
 import { RawSensorTracesIframe } from "./Components/RawSensorTracesIframe";
+import { SensorLocations } from "./Components/SensorLocations";
+import { Api } from "./Config";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -55,15 +58,27 @@ function getItem(
 	} as MenuItem;
 }
 
+type LoadingContextProps = {
+	loading: boolean;
+	setLoading: (isLoading: boolean) => void;
+};
+
+export const LoadingContext = createContext<LoadingContextProps>({
+	loading: false,
+	setLoading: () => {},
+});
+
 const App: React.FC = () => {
 	const [collapsed, setCollapsed] = useState(false);
-	const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
+	const [selectedChannel, setSelectedChannel] = useState<string | null>(
+		"MULTI"
+	);
 	const [selectedDataSource, setSelectedDataSource] = useState("");
 	const [rerender, setRerender] = useState(false);
 	const [hasErrors, setHasErrors] = useState(false);
 	const [tabKey, setTabKey] = useState("1");
-	const id = useId();
-	const otherId = useId();
+	const [showMultiPlots, setShowMultiPlots] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const onUpload = () => {
 		setRerender(!rerender);
 	};
@@ -74,11 +89,6 @@ const App: React.FC = () => {
 
 	function setErrors(errors: boolean) {
 		setHasErrors(errors);
-	}
-	function renderGraph() {
-		if (selectedChannel != null) {
-			return <DataGraph name={selectedChannel} setErrors={setErrors} />;
-		}
 	}
 	function onChange(key: string) {
 		setTabKey(key);
@@ -103,6 +113,10 @@ const App: React.FC = () => {
 			key: "2",
 			label: "Raw Sensor Traces",
 		},
+		{
+			key: "3",
+			label: "Sensor Locations",
+		},
 	];
 
 	function renderTabs() {
@@ -111,7 +125,93 @@ const App: React.FC = () => {
 				return <PSDIframe />;
 			case "2":
 				return <RawSensorTracesIframe />;
+			case "3":
+				return <SensorLocations />;
 		}
+	}
+
+	function isDataSourceEmpty(): boolean {
+		return selectedDataSource !== "";
+	}
+
+	async function brain() {
+		setLoading(true)
+		try {
+			await Api.get("/api/stc");
+		} catch (error) {
+			console.error(error);
+		}
+		finally {
+			setLoading(false)
+		}
+	}
+
+	function RenderContent() {
+		if (hasErrors) {
+			return <ErrorDisplay />;
+		}
+
+		return (
+			<>
+				{isDataSourceEmpty() &&
+					selectedChannel &&
+					selectedChannel !== "MULTI" && (
+						<DataGraph
+							name={selectedChannel}
+							setErrors={setErrors}
+						/>
+					)}
+				{isDataSourceEmpty() && selectedChannel === "MULTI" && (
+					<>
+						<Tabs
+							items={items}
+							onChange={onChange}
+							style={{
+								color: "black",
+							}}
+						/>
+						{renderTabs()}
+					</>
+				)}
+			</>
+		);
+	}
+
+	let menuItems = [
+		{
+			key: "1",
+			icon: <UploadFileButton onUpload={onUpload} />,
+		},
+		{
+			key: "2",
+			icon: (
+				<DatasourceDropdown
+					rerender={rerender}
+					onSelect={selectDataSource}
+					setErrors={setErrors}
+				/>
+			),
+		},
+		{
+			key: "3",
+			icon: <Button type="primary"  onClick={brain}>Show Brain!</Button>,
+		},
+	];
+
+	if (selectedDataSource !== "") {
+		menuItems = [
+			...menuItems,
+			{
+				key: "3",
+				icon: (
+					<ChannelsDropdown
+						onSelect={selectChannel}
+						dataSource={selectedDataSource}
+						setErrors={setErrors}
+					/>
+				),
+			},
+		];
 	}
 
 	return (
@@ -123,95 +223,74 @@ const App: React.FC = () => {
 					colorText: "black",
 					colorBgTextHover: "transparent",
 				},
+				components: {
+					Button: {
+						colorPrimary: "#3366ff",
+						colorPrimaryBgHover: "#ffffff",
+						colorPrimaryTextHover: "ffffff"
+					}
+				}
 			}}
 		>
-			<Layout className="app-layout">
-				<Sider
-					className="app-layout-sider"
-					trigger={null}
-					collapsible
-					collapsed={collapsed}
-				>
-					<div className="demo-logo-vertical" />
-					<Menu
-						className="app-layout-sider-menu"
-						theme="dark"
-						mode="vertical"
-						items={[
-							{
-								key: "1",
-								icon: <UploadFileButton onUpload={onUpload} />,
-							},
-							{
-								key: "2",
-								icon: (
-									<DatasourceDropdown
-										rerender={rerender}
-										onSelect={selectDataSource}
-										setErrors={setErrors}
-									/>
-								),
-							},
-							{
-								key: "3",
-								icon: (
-									<ChannelsDropdown
-										onSelect={selectChannel}
-										dataSource={selectedDataSource}
-										setErrors={setErrors}
-									/>
-								),
-							},
-						]}
-					/>
-				</Sider>
-				<Layout>
-					<Header className="app-layout-header">
-						<Row justify="center" align="top">
-							<Col flex="50%">
-								<Button
-									className="app-layout-header-button"
-									type="text"
-									icon={
-										collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />
-									}
-									onClick={() => setCollapsed(!collapsed)}
-								/>
-							</Col>
-							<Col flex="auto">
-								<img
-									className="app-layout-header-logo"
-									src={logo}
-									alt="The DaiqUIris"
-								/>
-							</Col>
-						</Row>
-						<Divider> </Divider>
-					</Header>
-					<Content>
-						{hasErrors && <ErrorDisplay />}
-						{!hasErrors && <>{renderGraph()}</>}
-						{selectedDataSource === "Sample Data" &&
-							selectedChannel === null && (
-								<>
-									<Tabs
-										items={items}
-										defaultActiveKey="1"
-										onChange={onChange}
-										style={{
-											color: "black",
-										}}
-									/>
-									{renderTabs()}
-								</>
-							)}
-					</Content>
-					<Footer className="app-layout-footer">
-						The DaiqUIris ©2023 Created by: Robin White, Zachary Duncan, Matthew
-						Rendall, & Cole Bailey
-					</Footer>
-				</Layout>
-			</Layout>
+			<LoadingContext.Provider
+				value={{ loading: loading, setLoading: setLoading }}
+			>
+				<Spin spinning={loading} size="large" tip="Loading..">
+					<Layout className="app-layout">
+						<Sider
+							className="app-layout-sider"
+							trigger={null}
+							collapsible
+							collapsed={collapsed}
+						>
+							<div className="demo-logo-vertical" />
+							<Menu
+								className="app-layout-sider-menu"
+								theme="dark"
+								mode="vertical"
+								items={menuItems}
+							/>
+						</Sider>
+						<Layout>
+							<Header className="app-layout-header">
+								<Row justify="center" align="top">
+									<Col flex="50%">
+										<Button
+											className="app-layout-header-button"
+											type="text"
+											icon={
+												collapsed ? (
+													<MenuUnfoldOutlined />
+												) : (
+													<MenuFoldOutlined />
+												)
+											}
+											onClick={() =>
+												setCollapsed(!collapsed)
+											}
+										/>
+									</Col>
+									<Col flex="auto">
+										<img
+											className="app-layout-header-logo"
+											src={logo}
+											alt="The DaiqUIris"
+										/>
+									</Col>
+								</Row>
+								<Divider> </Divider>
+							</Header>
+							<Content>
+								<RenderContent />
+							</Content>
+							<Footer className="app-layout-footer">
+								The DaiqUIris ©2023 Created by: Robin White,
+								Zachary Duncan, Matthew Rendall, & Cole Bailey
+							</Footer>
+						</Layout>
+					</Layout>
+				</Spin>
+			</LoadingContext.Provider>
 		</ConfigProvider>
 	);
 };

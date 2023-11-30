@@ -6,6 +6,8 @@ import json
 import os
 import mpld3
 from flask_cors import CORS, cross_origin
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 def init_data():
     sample_data_folder = mne.datasets.sample.data_path()
@@ -18,8 +20,19 @@ def init_data():
 raw = init_data()
 raw = raw.crop(0, 30).load_data()
 
+
 app = Flask(__name__)
+limiter = Limiter(key_func=get_remote_address, app=app)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+
+def get_edf_data(data):
+    print(data.times)
+    df = data.describe(True)
+    
+    out = df.to_json(orient='records')
+    data.plot()
+    #return json.loads(out)
 
 def get_channels_from_file(file_name: str) -> list[str]:
 
@@ -31,13 +44,19 @@ def get_channels_from_file(file_name: str) -> list[str]:
         case "fif":
             data = mne.io.read_raw_fif(file_name)
         case "edf":
-            data = mne.io.read_raw_edf(file_name)
+            data = mne.io.read_raw_edf(file_name, preload=True)
+            # return get_edf_data(data)
+    if (data != None):
+        global raw
+        raw = data
+
     channels = data.crop(0, 30).load_data().ch_names
     return channels
 
 
 
 def get_channel_data(name):
+    print("CHANNELS:", raw.info.ch_names)
     data, times = raw.get_data(picks=[name], return_times=True)
 
     exported_data = {
@@ -60,6 +79,8 @@ def get_channels():
 def get_channels_from_file_endpoint(name):
     channels = []
     if (name == "Sample Data"):
+        global raw
+        raw = init_data()
         channels = raw.ch_names
     else:
         files = os.listdir("files")
@@ -118,7 +139,7 @@ def get_file_names():
 @app.route("/api/psd", methods=["GET"])
 @cross_origin()
 def get_psd():
-
+    raw.load_data()
     figure = raw.compute_psd(fmax=50).plot(picks="data", exclude="bads", sphere="auto", show=False)
 
     html_str = mpld3.fig_to_html(figure, template_type="general")
@@ -129,8 +150,18 @@ def get_psd():
 @cross_origin()
 def get_raw_sensors():
 
+    raw.load_data()
     figure = raw.plot(duration=5, n_channels=30, show=False)
 
+    html_str = mpld3.fig_to_html(figure, template_type="general")
+
+    return html_str
+
+@app.route("/api/sensors", methods=["GET"])
+@cross_origin()
+@limiter.limit("2/second")
+def get_sensors():
+    figure = raw.plot_sensors(ch_type="eeg", show=False)
     html_str = mpld3.fig_to_html(figure, template_type="general")
 
     return html_str
@@ -210,6 +241,7 @@ def get_stc():
     inverse_operator_file = (
         sample_data_folder / "MEG" / "sample" / "sample_audvis-meg-oct-6-meg-inv.fif"
     )
+
     inv_operator = mne.minimum_norm.read_inverse_operator(inverse_operator_file)
     snr = 3.0
     lambda2 = 1.0 / snr**2
@@ -219,7 +251,7 @@ def get_stc():
 
     figure = stc.plot(initial_time=0.1, hemi="split", views=["lat", "med"], subjects_dir=subjects_dir)
 
-    return "Plotted"
+    return mpld3.fig_to_html(figure, template_type="general")
 
 
 if __name__ == "__main__":
