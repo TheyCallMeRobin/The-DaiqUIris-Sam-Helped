@@ -11,14 +11,14 @@ export const PSDIframe = () => {
 
 	useEffect(() => {
 		const gethtml = async () => {
-			setLoading(true);
+			//setLoading(true);
 			const { data } = await Api.get("/api/psd");
 			setHtml(data);
 
-			setLoading(false);
+			//setLoading(false);
 		};
 		gethtml();
-	}, [loading]);
+	}, []);
 
 	return (
 		<>
