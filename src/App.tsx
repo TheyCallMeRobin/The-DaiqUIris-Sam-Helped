@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { createContext, useEffect, useId } from "react";
+import React, { createContext, useEffect, useId, useMemo } from "react";
 import logo from "./DaiqUIris-Logo.png";
 import {
 	MenuFoldOutlined,
@@ -77,8 +77,8 @@ const App: React.FC = () => {
 	const [rerender, setRerender] = useState(false);
 	const [hasErrors, setHasErrors] = useState(false);
 	const [tabKey, setTabKey] = useState("1");
-	const [showMultiPlots, setShowMultiPlots] = useState(false);
 	const [loading, setLoading] = useState(false);
+
 	const onUpload = () => {
 		setRerender(!rerender);
 	};
@@ -122,11 +122,11 @@ const App: React.FC = () => {
 	function renderTabs() {
 		switch (tabKey) {
 			case "1":
-				return <PSDIframe />;
+				return <PSDIframe setLoading={setLoading} />;
 			case "2":
-				return <RawSensorTracesIframe />;
+				return <RawSensorTracesIframe setLoading={setLoading} />;
 			case "3":
-				return <SensorLocations />;
+				return <SensorLocations setLoading={setLoading} />;
 		}
 	}
 
@@ -135,14 +135,13 @@ const App: React.FC = () => {
 	}
 
 	async function brain() {
-		setLoading(true)
+		setLoading(true);
 		try {
 			await Api.get("/api/stc");
 		} catch (error) {
 			console.error(error);
-		}
-		finally {
-			setLoading(false)
+		} finally {
+			setLoading(false);
 		}
 	}
 
@@ -194,7 +193,11 @@ const App: React.FC = () => {
 		},
 		{
 			key: "3",
-			icon: <Button type="primary"  onClick={brain}>Show Brain!</Button>,
+			icon: (
+				<Button type="primary" onClick={brain}>
+					Show Brain!
+				</Button>
+			),
 		},
 	];
 
@@ -227,70 +230,64 @@ const App: React.FC = () => {
 					Button: {
 						colorPrimary: "#3366ff",
 						colorPrimaryBgHover: "#ffffff",
-						colorPrimaryTextHover: "ffffff"
-					}
-				}
+						colorPrimaryTextHover: "ffffff",
+					},
+				},
 			}}
 		>
-			<LoadingContext.Provider
-				value={{ loading: loading, setLoading: setLoading }}
-			>
-				<Spin spinning={loading} size="large" tip="Loading..">
-					<Layout className="app-layout">
-						<Sider
-							className="app-layout-sider"
-							trigger={null}
-							collapsible
-							collapsed={collapsed}
-						>
-							<div className="demo-logo-vertical" />
-							<Menu
-								className="app-layout-sider-menu"
-								theme="dark"
-								mode="vertical"
-								items={menuItems}
-							/>
-						</Sider>
-						<Layout>
-							<Header className="app-layout-header">
-								<Row justify="center" align="top">
-									<Col flex="50%">
-										<Button
-											className="app-layout-header-button"
-											type="text"
-											icon={
-												collapsed ? (
-													<MenuUnfoldOutlined />
-												) : (
-													<MenuFoldOutlined />
-												)
-											}
-											onClick={() =>
-												setCollapsed(!collapsed)
-											}
-										/>
-									</Col>
-									<Col flex="auto">
-										<img
-											className="app-layout-header-logo"
-											src={logo}
-											alt="The DaiqUIris"
-										/>
-									</Col>
-								</Row>
-								<Divider> </Divider>
-							</Header>
-							<Content>
-								<RenderContent />
-							</Content>
-							<Footer className="app-layout-footer">
-								The DaiqUIris ©2023 Created by: Robin White,
-								Zachary Duncan, Matthew Rendall, & Cole Bailey
-							</Footer>
-						</Layout>
+			<Spin spinning={loading} size="large" tip="Loading..">
+				<Layout className="app-layout">
+					<Sider
+						className="app-layout-sider"
+						trigger={null}
+						collapsible
+						collapsed={collapsed}
+					>
+						<div className="demo-logo-vertical" />
+						<Menu
+							className="app-layout-sider-menu"
+							theme="dark"
+							mode="vertical"
+							items={menuItems}
+						/>
+					</Sider>
+					<Layout>
+						<Header className="app-layout-header">
+							<Row justify="center" align="top">
+								<Col flex="50%">
+									<Button
+										className="app-layout-header-button"
+										type="text"
+										icon={
+											collapsed ? (
+												<MenuUnfoldOutlined />
+											) : (
+												<MenuFoldOutlined />
+											)
+										}
+										onClick={() => setCollapsed(!collapsed)}
+									/>
+								</Col>
+								<Col flex="auto">
+									<img
+										className="app-layout-header-logo"
+										src={logo}
+										alt="The DaiqUIris"
+									/>
+								</Col>
+							</Row>
+							<Divider> </Divider>
+						</Header>
+						<Content>
+							<RenderContent />
+						</Content>
+						<Footer className="app-layout-footer">
+							The DaiqUIris ©2023 Created by: Robin White, Zachary
+							Duncan, Matthew Rendall, & Cole Bailey
+						</Footer>
 					</Layout>
-				</Spin>
-			</LoadingContext.Provider>
+				</Layout>
+			</Spin>
 		</ConfigProvider>
 	);
 };
